@@ -20,8 +20,8 @@
                         $val_id = isset($produk) ? $produk->id_produk : '';
                         $val_nama = isset($produk) ? $produk->nama_produk : '';
                         $val_harga = isset($produk) ? $produk->harga : '';
-                        $val_kat = isset($produk) ? $produk->id_kategori : '';
-                        $val_stat = isset($produk) ? $produk->id_status : '';
+                        $val_kat    = isset($produk) ? $produk->kategori_id : ''; 
+                        $val_stat   = isset($produk) ? $produk->status_id : '';
                     ?>
                     
                     <form action="<?= base_url($action); ?>" method="POST">
@@ -54,7 +54,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-bold">Kategori</label>
-                            <select name="id_kategori" class="form-select" required>
+                            <select name="kategori_id" class="form-select" required>
                                 <option value="">-- Pilih Kategori --</option>
                                 <?php foreach($kategori as $k): ?>
                                     <option value="<?= $k->id_kategori ?>" <?= ($k->id_kategori == $val_kat) ? 'selected' : '' ?>>
@@ -66,7 +66,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-bold">Status</label>
-                            <select name="id_status" class="form-select" required>
+                            <select name="status_id" class="form-select" required>
                                 <option value="">-- Pilih Status --</option>
                                 <?php foreach($status as $s): ?>
                                     <option value="<?= $s->id_status ?>" <?= ($s->id_status == $val_stat) ? 'selected' : '' ?>>
@@ -75,7 +75,6 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="<?= base_url('produk'); ?>" class="btn btn-light-brand">Batal</a>
                             <button type="submit" class="btn btn-primary">

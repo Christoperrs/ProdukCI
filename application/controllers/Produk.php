@@ -28,38 +28,99 @@ class Produk extends CI_Controller {
         
         $this->load->view('layout', $data); 
     }
-/**
- * Menampilkan form tambah produk yang berisi mengambil data dari model dan menampilkan view yang sesuai.
- * 
- * @return void
- */
+    /**
+     * Menampilkan form tambah produk yang berisi mengambil data dari model dan menampilkan view yang sesuai.
+     * 
+     * @return void
+     */
     public function tambah() {
         $data['title'] = 'Tambah Produk';
         $data['kategori'] = $this->Produk_model->get_all_kategori(); 
         $data['status'] = $this->Produk_model->get_all_status();
-        $data['content'] = 'produk_form'; 
+        
+        // PERBAIKAN: Tambahkan 'produk/' sebelum nama file
+        $data['content'] = 'produk/produk_form'; 
+        
         $this->load->view('layout', $data);
     }
-    
+
 /**
- * Function to edit a product.
+ * Simpan produk.
  *
- * @param int $id
+ * Validasi input (Nama wajib diisi, Harga wajib angka)
+ *
  * @return void
- *
- * This function will edit a product based on the given id.
- * It will load the view 'produk_form' and pass the data to it.
  */
+    public function simpan() {
+        // Poin 7: Validasi input (Nama wajib diisi, Harga wajib angka)
+        $this->form_validation->set_rules('id_produk', 'ID Produk', 'required|numeric|is_unique[produk.id_produk]');
+        $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
+        $this->form_validation->set_rules('harga', 'Harga', 'required|numeric');
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->tambah();
+        } else {
+            $data = [
+                'id_produk'   => $this->input->post('id_produk'),
+                'nama_produk' => $this->input->post('nama_produk'),
+                'harga'       => $this->input->post('harga'),
+                'kategori_id' => $this->input->post('kategori_id'),
+                'status_id'   => $this->input->post('status_id')
+            ];
+            $this->Produk_model->insert_produk($data);
+            $this->session->set_flashdata('pesan', 'Data berhasil disimpan!');
+            redirect('produk');
+        }
+    }
+    /**
+     * Function to edit a product.
+     *
+     * @param int $id
+     * @return void
+     *
+     * This function will edit a product based on the given id.
+     * It will load the view 'produk_form' and pass the data to it.
+     */
     public function edit($id) {
         $data['title'] = 'Edit Produk';
         $data['produk'] = $this->Produk_model->get_produk_by_id($id); 
         $data['kategori'] = $this->Produk_model->get_all_kategori();
         $data['status'] = $this->Produk_model->get_all_status();
-        $data['content'] = 'produk_form';
+        
+        // PERBAIKAN: Sesuaikan folder view menjadi 'produk/produk_form'
+        $data['content'] = 'produk/produk_form';
+        
         $this->load->view('layout', $data);
     }
+    /**
+     * Mengupdate produk berdasarkan id produk
+     * Mengupdate produk berdasarkan id produk
+     * Set flash data 'pesan' dengan value 'Data berhasil diperbarui!' setelah mengupdate produk
+     * Redirect ke halaman 'produk' setelah mengupdate produk
+     */
+    public function update() {
+        $id = $this->input->post('id_produk');
+        
+        $this->form_validation->set_rules('nama_produk', 'Nama Produk', 'required');
+        $this->form_validation->set_rules('harga', 'Harga', 'required|numeric');
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->edit($id);
+        } else {
+            $data = [
+                'nama_produk' => $this->input->post('nama_produk'),
+                'harga'       => $this->input->post('harga'),
+                'kategori_id' => $this->input->post('kategori_id'),
+                'status_id'   => $this->input->post('status_id')
+            ];
+            $this->Produk_model->update_produk($id, $data);
+            $this->session->set_flashdata('pesan', 'Data berhasil diperbarui!');
+            redirect('produk');
+        }
+    }
+
+
 /**
- * Hapus produk berdasarkan id produk
  * Menghapus produk berdasarkan id produk
  * Set flash data 'pesan' dengan value 'Data berhasil diproses!' setelah menghapus produk
  * Redirect ke halaman 'produk' setelah menghapus produk
