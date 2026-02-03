@@ -16,7 +16,6 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/theme.min.css') ?>" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 </head>
-
 <body>
     <nav class="nxl-navigation">
         <div class="navbar-wrapper">

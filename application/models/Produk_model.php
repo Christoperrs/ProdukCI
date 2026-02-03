@@ -3,13 +3,10 @@ class Produk_model extends CI_Model {
 
     public function save_batch_api($data) {
         foreach ($data as $row) {
-            // 1. Cek atau Insert Kategori
             $kategori_id = $this->get_or_insert('kategori', 'id_kategori', ['nama_kategori' => $row['kategori']]);
             
-            // 2. Cek atau Insert Status
             $status_id = $this->get_or_insert('status', 'id_status', ['nama_status' => $row['status']]);
 
-            // 3. Insert atau Update Produk
             $data_produk = [
                 'id_produk'   => $row['id_produk'],
                 'nama_produk' => $row['nama_produk'],

@@ -9,16 +9,22 @@ class Dashboard extends CI_Controller {
         $this->load->model('Kategori_model');
     }
 
+/**
+ * Index page for CRM Dashboard
+ *
+ * This function is used to display the dashboard of CRM application.
+ * It will display the total number of products, categories, and the number of products that are or are not suitable for sale.
+ *
+ * The function will also display the statistical data of products per category.
+ *
+ * @return void
+ */
     public function index() {
         $data['title'] = 'CRM Dashboard';
-        
-        // Mengambil statistik ringkas
         $data['total_produk'] = $this->db->count_all('produk');
         $data['total_kategori'] = $this->db->count_all('kategori');
         $data['bisa_dijual'] = $this->db->where('id_status', 1)->from('produk')->count_all_results();
         $data['tidak_bisa_dijual'] = $this->db->where('id_status', 2)->from('produk')->count_all_results();
-
-        // Data untuk Grafik: Jumlah produk per kategori
         $this->db->select('k.nama_kategori, COUNT(p.id_produk) as jumlah');
         $this->db->from('kategori k');
         $this->db->join('produk p', 'p.id_kategori = k.id_kategori', 'left');
