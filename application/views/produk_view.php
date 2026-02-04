@@ -90,10 +90,14 @@
         </div>
     </div>
 </div>
-
 <script>
-$(document).ready(function() {
-    // Inisialisasi DataTable ala Duralux
+// Pastikan script ini diletakkan di bagian paling bawah file
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // 1. Inisialisasi DataTable (Gunakan selector yang spesifik)
+    if ($.fn.DataTable.isDataTable('#myTable')) {
+        $('#myTable').DataTable().destroy();
+    }
     $('#myTable').DataTable({
         language: {
             search: "Cari Produk:",
@@ -102,41 +106,11 @@ $(document).ready(function() {
         }
     });
 
-    // Alert Flashdata
-    <?php if($this->session->flashdata('pesan')): ?>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '<?= $this->session->flashdata('pesan'); ?>',
-            timer: 2000,
-            showConfirmButton: false
-        });
-    <?php endif; ?>
-
-    // Alert Konfirmasi Hapus dengan Nama Produk
-    $('.btn-delete').on('click', function(e) {
+    // 2. Alert Sinkronisasi API (Gunakan delegasi event)
+    $(document).on('click', '#btn-sync', function(e) {
         e.preventDefault();
-        const href = $(this).attr('href');
-        const nama = $(this).data('nama');
+        console.log("Tombol Sync Diklik"); // Untuk debug di F12
 
-        Swal.fire({
-            title: 'Hapus Produk?',
-            html: `Apakah Anda yakin ingin menghapus produk <strong>${nama}</strong>?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = href;
-            }
-        });
-    });
-
-    // Alert Konfirmasi Sync API
-    $('#btn-sync').on('click', function() {
         Swal.fire({
             title: 'Sinkronisasi Data?',
             text: "Aplikasi akan mengambil data terbaru dari API Fastprint",
@@ -151,9 +125,33 @@ $(document).ready(function() {
                     title: 'Mohon Tunggu...',
                     text: 'Sedang menarik data API',
                     allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); }
+                    didOpen: () => { 
+                        Swal.showLoading(); 
+                    }
                 });
+                // Arahkan ke URL controller
                 window.location.href = "<?= base_url('produk/fetch_from_api'); ?>";
+            }
+        });
+    });
+
+    // 3. Konfirmasi Hapus (Event Delegation untuk Page 2 dst)
+    $(document).on('click', '.btn-delete', function(e) {
+        e.preventDefault();
+        const href = $(this).attr('href');
+        const nama = $(this).data('nama');
+
+        Swal.fire({
+            title: 'Hapus Produk?',
+            html: `Apakah Anda yakin ingin menghapus produk <strong>${nama}</strong>?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = href;
             }
         });
     });

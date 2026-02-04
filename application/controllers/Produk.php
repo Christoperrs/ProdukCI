@@ -157,19 +157,13 @@ class Produk extends CI_Controller {
 
         if (isset($result['error']) && $result['error'] == 0) {
             $this->Produk_model->save_batch_api($result['data']);
-            echo "Berhasil sinkronisasi " . count($result['data']) . " data.";
+            $this->session->set_flashdata('pesan', 'Berhasil sinkronisasi ' . count($result['data']) . ' data dari API.');
+            redirect('produk');
         } else {
-            echo "<h3>Gagal Sinkronisasi!</h3>";
-            echo "Pesan Error: " . ($result['ket'] ?? 'Koneksi API bermasalah') . "<br>";
-            echo "<hr>";
-            echo "<strong>Detail Credentials yang dikirim:</strong><br>";
-            echo "URL: " . $url . "<br>";
-            echo "Username: <code style='color:red'>" . $username . "</code><br>";
-            echo "Password (Plain): <code>bisacoding-" . date('d-m-y') . "</code><br>";
-            echo "Password (MD5): <code style='color:blue'>" . $password . "</code><br>";
-            echo "Waktu Server Anda: " . date('Y-m-d H:i:s') . "<br>";
-            echo "<hr>";
-            echo "Response API: " . $response;
+            $pesan_error = isset($result['ket']) ? $result['ket'] : 'Koneksi API bermasalah';
+            $this->session->set_flashdata('error', 'Gagal Sinkronisasi: ' . $pesan_error);
+            
+            redirect('produk');
         }
     }
 }
